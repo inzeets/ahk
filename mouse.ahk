@@ -1,4 +1,4 @@
-Menu, Tray, Icon, z_mouse.png
+Menu, Tray, Icon, mouse.png
 
 CoordMode, Mouse, Screen
 

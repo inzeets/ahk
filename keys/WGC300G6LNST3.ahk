@@ -14,6 +14,10 @@ $*Ins::Send("{Blind}{Home}")
   SetTitleMatchMode(2)
   try WinActivate("AKLEYMEN@ford ahk_exe OUTLOOK.exe")
 }
+#o:: {
+  SetTitleMatchMode(2)
+  WinActivate("Message (HTML) ahk_exe OUTLOOK.EXE")
+}
 #a:: try WinActivate("ahk_exe Picasa3.exe")
 #n:: try WinActivate("ahk_exe ONENOTE.EXE")
 #r:: try WinActivate("ahk_exe vncviewer.exe")

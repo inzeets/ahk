@@ -1,5 +1,6 @@
 #Requires AutoHotkey v2.0
 #SingleInstance Force
+#UseHook
 
 ; Admin check
 if not A_IsAdmin {
@@ -14,8 +15,11 @@ ListLines(false)
 KeyHistory(0)
 ProcessSetPriority("H")
 
-; Reload script
+#SuspendExempt
+; Reload/Suspend script
 #+R::Reload
+#+S::Suspend -1
+#SuspendExempt False
 
 ; Remaps
 CapsLock::Insert
@@ -78,9 +82,6 @@ $!Down::Send("{PgDn}")
   }
 }
 
-; switch between last two windows by Alt-q
-!q:: SwitchToLast()
-
 SwitchToLast() {
   ids := WinGetList(,, "Program Manager") ; Exclude desktop
   for this_ID in ids {
@@ -115,9 +116,47 @@ IsWindow(hWnd) {
 #s:: try WinActivate("ahk_exe mintty.exe")
 #z:: try WinActivate("ahk_exe sioyek.exe")
 ^`:: try WinActivate("ahk_exe FAR.exe")
+
+#SuspendExempt
+; switch between last two windows by Alt-q
+!q:: {
+  SwitchToLast()
+  if WinActive("ahk_exe RDCMan.exe") && IsRDPFullScreen() {
+      Sleep(50)
+      Send "^!\^!\"
+  }
+}
+#HotIf not WinActive("ahk_exe RDCMan.exe")
 #w:: {
   try WinActivate("ahk_exe RDCMan.exe")
-  try ControlFocus(ControlGetHwnd("IHWindowClass1"))
+  if WinActive("ahk_exe RDCMan.exe") {
+    if IsRDPFullScreen() {
+        Sleep(50)
+        Send "^!\^!\"
+    } else {
+      try {
+        ControlFocus(ControlGetHwnd("WindowsForms10.SysTreeView32.app.0.3598b65_r3_ad11"))
+        Send("{Tab}")
+      }
+    }
+  }
+}
+#HotIf
+#HotIf WinActive("ahk_exe RDCMan.exe")
+F12:: {
+  Send "^!\"
+  Sleep(50)
+  Send "^!\^!\"
+}
+#HotIf
+#SuspendExempt False
+
+; Check if RDP is in the full screen mode
+IsRDPFullScreen() {
+  hwnd := DllCall("WindowFromPoint", "int64", (0 & 0xFFFFFFFF) | (0 << 32))
+  controlNN := ""
+  try controlNN := ControlGetClassNN(hwnd)
+  return (controlNN == "UIMainClass1")
 }
 
 ; Include local, host-specific, mappings
