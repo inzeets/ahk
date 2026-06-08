@@ -160,9 +160,7 @@ IsRDPFullScreen() {
 }
 
 ; Include local, host-specific, mappings
-if FileExist("%A_ScriptDir%\\keys\\%A_ComputerName%.ahk") {
-  #Include *i "%A_ScriptDir%\\keys\\%A_ComputerName%.ahk"
-}
+#Include *i %A_ScriptDir%\keys\%A_ComputerName%.ahk
 
 ; Show host name and copy it to the clipboard
 #+n:: {
